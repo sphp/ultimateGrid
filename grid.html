@@ -15,36 +15,40 @@ ul{height: 2em; padding: 0}
 .row{clear: both}
 .row>*{float: left;}
 </style>
-<style id="responsive"></style>
 <script>
 function isset(a){return typeof a !== 'undefined'}
-function unique(v, i, self){return self.indexOf(v) === i}
+function unique(v, i, s){return s.indexOf(v) === i}
 function responsive(){
- var Tcss=[], Scss=[], Mcss=[], Lcss=[], Xcss=[], style='',
- responsive = document.querySelector("style#responsive"),
- elms  = document.querySelectorAll(".row > *");
- elms.forEach(function(elm){
-  var clss = elm.className.split(' ');
-  clss.forEach(function(cls,i){
-   var p = cls.split('-');
-   if (/t|s|m|l|x/.test(p[0])){
-    var css = '.'+cls+'{width:calc(100% / '+(isset(p[2])?p[2]:12)+' * '+p[1]+')}';
-    switch(p[0]){
-     case 't': Tcss = Tcss.concat([css]); break;
-     case 's': Scss = Scss.concat([css]); break;
-     case 'm': Mcss = Mcss.concat([css]); break;
-     case 'l': Lcss = Lcss.concat([css]); break;
-     case 'x': Xcss = Xcss.concat([css]); break;
-    }
+   var Tcss=[], Scss=[], Mcss=[], Lcss=[], Xcss=[], style='',
+   responsive = document.querySelector("style#responsive"),
+   elms  = document.querySelectorAll(".row > *");
+   elms.forEach(function(elm){
+      var clss = elm.className.split(' ');
+      clss.forEach(function(cls,i){
+         var p = cls.split('-');
+         if (/t|s|m|l|x/.test(p[0])){
+            var css = '.'+cls+'{width:calc(100% / '+(isset(p[2])?p[2]:12)+' * '+p[1]+')}';
+            switch(p[0]){
+               case 't': Tcss = Tcss.concat([css]); break;
+               case 's': Scss = Scss.concat([css]); break;
+               case 'm': Mcss = Mcss.concat([css]); break;
+               case 'l': Lcss = Lcss.concat([css]); break;
+               case 'x': Xcss = Xcss.concat([css]); break;
+            }
+         }
+      });
+   });
+   if(Tcss.length>0) style+='\n@media only screen and (max-width: 480px){\n'+Tcss.filter(unique).join('\n')+'\n}';
+   if(Scss.length>0) style+='\n@media only screen and (min-width: 481px){\n'+Scss.filter(unique).join('\n')+'\n}';
+   if(Mcss.length>0) style+='\n@media only screen and (min-width: 769px){\n'+Mcss.filter(unique).join('\n')+'\n}';
+   if(Lcss.length>0) style+='\n@media only screen and (min-width: 1280px){\n.container{width:1100px}'+Lcss.filter(unique).join('\n')+'\n}';
+   if(Xcss.length>0) style+='\n@media only screen and (min-width: 1500px){\n.container{width:1400px}'+Xcss.filter(unique).join('\n')+'\n}';
+   if(document.querySelector('style#responsive') !== undefined){
+      var rstyle = document.createElement('style');
+      rstyle.id = 'responsive';
+      rstyle.innerHTML = style.trim();
+      document.head.appendChild(rstyle);
    }
-  });
- });
- if(Tcss.length>0) style += '\n@media only screen and (max-width: 480px){\n'+Tcss.filter(unique).join('\n')+'\n}';
- if(Scss.length>0) style += '\n@media only screen and (min-width: 481px){\n'+Scss.filter(unique).join('\n')+'\n}';
- if(Mcss.length>0) style += '\n@media only screen and (min-width: 769px){\n'+Mcss.filter(unique).join('\n')+'\n}';
- if(Lcss.length>0) style += '\n@media only screen and (min-width: 1280px){\n.container{width:1100px}'+Lcss.filter(unique).join('\n')+'\n}';
- if(Xcss.length>0) style += '\n@media only screen and (min-width: 1500px){\n.container{width:1400px}'+Xcss.filter(unique).join('\n')+'\n}';
- responsive.innerHTML = style.trim();
 }
 window.onresize = responsive;
 window.onload = responsive;
